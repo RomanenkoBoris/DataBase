@@ -1,0 +1,74 @@
+USE learn;
+
+DROP TABLE IF EXISTS staff; 
+
+CREATE TABLE IF NOT EXISTS staff (
+			id integer,
+            name varchar(64),
+            surname varchar(64),
+            age integer,
+            position varchar(64)
+            );
+            
+INSERT INTO staff (name, surname, age, position) VALUES ('Alex', 'Alekseev', 24, 'worker'),
+														('Oleg', 'Olegov', 36, 'administration'),
+														('Boris', 'Borisov', 41, 'security'),
+														('Efim', 'Efimov', 19, 'worker'),
+														('Nikolai', 'Nikolaev',33, 'security'),
+														('Arsen', 'Arsenov', 55, 'worker'),
+														('Vladimir', 'Vladimirov', 47, 'administration'),
+														('Sergey', 'Alekseev', 21, 'worker'),
+														('Pavel', 'Pavlov', 59, 'security'),
+														('Roman', 'Romanov', 45, 'administration');
+                                                        
+ALTER TABLE staff
+ADD COLUMN salary integer;
+
+SET sql_safe_updates=0;
+
+UPDATE staff
+SET salary = 1000
+WHERE position = 'worker';
+
+UPDATE staff
+SET salary = 2000
+WHERE position = 'security';
+
+UPDATE staff
+SET salary = 5000
+WHERE position = 'administration';
+
+UPDATE staff
+SET salary = salary * 2;
+
+DELETE FROM staff
+WHERE age > 45;
+
+CREATE VIEW v_staff_workers AS
+SELECT
+	*
+FROM staff
+WHERE position = 'worker';
+
+CREATE VIEW v_staff_security AS
+SELECT
+	*
+FROM staff
+WHERE position = 'security';
+
+CREATE VIEW v_staff_administration AS
+SELECT
+	*
+FROM staff
+WHERE position = 'administration';
+
+CREATE TABLE staff2 AS
+SELECT
+	name,
+    surname,
+    position
+FROM staff
+WHERE position = 'administration';
+
+ALTER TABLE staff2
+DROP COLUMN position;
