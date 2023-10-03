@@ -1,0 +1,98 @@
+USE learn;
+
+DROP TABLE IF EXISTS students;
+
+CREATE TABLE IF NOT EXISTS students(
+name VARCHAR(64) NOT NULL,
+lastname VARCHAR(64) NOT NULL,
+avg_mark NUMERIC(2,1) CHECK (avg_mark BETWEEN 0 AND 5),
+gender VARCHAR(128) CHECK (gender in ('M','F'))
+);
+
+INSERT INTO students (name, lastname, avg_mark, gender) VALUES ('Oleg', 'Petrov', 4.3, 'M'),
+															   ('Semen', 'Stpanov', 3.1, 'M'),
+                                                               ('Olga', 'Semenova', 4.7, 'F'),
+                                                               ('Igor', 'Romanov', 3.1, 'M'),
+                                                               ('Irina', 'Ivanova', 2.2, 'F');
+                                                               
+SELECT
+	*
+FROM students;
+
+SET sql_safe_updates = 0;
+
+ALTER TABLE students
+ADD COLUMN id INTEGER PRIMARY KEY auto_increment;
+
+-- Поменять тип у gender на char(1)(вспоминаем modify)
+ALTER TABLE students
+MODIFY COLUMN gender CHAR(1) CHECK (gender in ('M','F'));
+
+-- переименовать поле name на firstname
+ALTER TABLE students
+RENAME COLUMN name TO firstname;
+
+-- найти учеников, у которых оценка больше 4
+SELECT
+	*
+FROM students
+WHERE avg_mark > 4;
+
+-- найти учеников, у которых не входит в диапазон от 3 до 4
+SELECT
+	*
+FROM students
+WHERE avg_mark NOT BETWEEN 3 AND 4;
+
+-- найти учеников, у которых имя начинается на И
+SELECT
+	*
+FROM students
+WHERE firstname LIKE 'I%';
+
+
+-- найти учеников, у которых оценка 2.2 или 3.1 или 4.7
+SELECT
+	*
+FROM students
+WHERE avg_mark IN (2.2, 3.1, 4.7);
+
+-- Создать представление, которое содержит всех мужчин
+CREATE VIEW v_students_male AS
+SELECT
+	*
+FROM students
+WHERE gender = 'M';
+
+-- Создать представление, которое содержит всех женщин
+CREATE VIEW v_students_female AS
+SELECT
+	*
+FROM students
+WHERE gender = 'F';
+
+-- Найти набор уникальных оценок
+SELECT distinct
+	avg_mark
+FROM students;
+
+/* Увеличить всем учащимся оценку в 10 раз (предварительно нужно сделать drop check на колонке с оценками,
+а так же изменить тип колонки на более большой numeric(3,1)) */
+ALTER TABLE students
+DROP CHECK students_chk_1;
+
+ALTER TABLE students
+MODIFY COLUMN avg_mark numeric(3,1);
+
+UPDATE students
+SET avg_mark = avg_mark * 10;
+
+-- Поменяйте у Олега Петрова фамилию на Сидоров
+UPDATE students
+SET lastname = 'Sidorov'
+WHERE firstname = 'Oleg' AND lastname = 'Petrov';
+
+-- Для всех учеников, у которых оценка не больше 31 увеличить на 10
+UPDATE students
+SET avg_mark = avg_mark + 10
+WHERE avg_mark <= 31; 
