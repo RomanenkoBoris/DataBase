@@ -1,0 +1,15 @@
+USE hr;
+
+-- Найти сотрудников(вывести информацию о них - имя, фамилию), у которых наибольшая зарплата в их конкретном департаменте
+
+SELECT
+	first_name,
+    last_name,
+    salary,
+    department_id
+FROM employees
+WHERE (department_id, salary) IN (SELECT
+					department_id,
+					MAX(salary)
+				  FROM employees
+				  GROUP BY department_id);
