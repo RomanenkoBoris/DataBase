@@ -1,0 +1,16 @@
+USE hr;
+
+-- Найти департамент с наибольшим количеством сотрудников(вывести название департамента и ид департамента)
+
+SELECT
+    t1.department_id,
+    t2.department_name
+FROM (SELECT
+	 department_id,
+	 count(employee_id) employee_cnt
+      FROM employees
+      GROUP BY department_id
+      ORDER BY employee_cnt DESC
+      LIMIT 1) t1
+INNER JOIN departments t2
+ON t1.department_id = t2.department_id;
